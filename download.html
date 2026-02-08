@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Download our App Today! | Wifly</title>
+    <script src="https://kit.fontawesome.com/eeb01edac2.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00d2ff;
+            --bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --discord: #5865F2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; line-height: 1.5; overflow-x: hidden; }
+
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 0%, #1a2a3a 0%, #050505 50%);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; height: 75px; position: sticky; top: 0; z-index: 1000;
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo { font-family: 'Sora'; font-weight: 800; text-decoration: none; color: white; font-size: 1.3rem; }
+        .logo span { color: var(--accent); }
+
+        .nav-links-landscape { display: none; } 
+        .nav-links-landscape a {
+            color: var(--text-dim); text-decoration: none; font-size: 0.95rem;
+            font-weight: 600; font-family: 'Sora'; transition: 0.2s;
+        }
+        .nav-links-landscape a.active, .nav-links-landscape a:hover { color: var(--accent); }
+
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .btn-white-land { display: none; }
+
+        .menu-btn { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+        .menu-btn span { display: block; width: 25px; height: 2px; background: white; border-radius: 2px; }
+
+        /* --- MENU OVERLAY --- */
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 3000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .menu-overlay.active { right: 0; }
+        .close-area { position: absolute; top: 20px; right: 30px; font-size: 2.5rem; color: var(--text-dim); cursor: pointer; }
+        .mobile-links { display: flex; flex-direction: column; gap: 30px; text-align: center; }
+        .mobile-links a { color: white; text-decoration: none; font-family: 'Sora'; font-size: 1.5rem; font-weight: 800; }
+        .mobile-links a.active { color: var(--accent); }
+
+        /* --- RESPONSIVE LOGIC --- */
+        @media (min-width: 900px) {
+            .menu-btn { display: none !important; }
+            .nav-links-landscape { 
+                display: flex; gap: 40px; position: absolute; left: 50%; transform: translateX(-50%); 
+            }
+            .btn-white-land {
+                display: block !important; background: white; color: black;
+                padding: 10px 22px; border-radius: 10px; text-decoration: none;
+                font-size: 0.9rem; font-weight: 800; font-family: 'Sora';
+            }
+        }
+
+        /* --- CONTENT --- */
+        .container { padding: 40px 5%; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        .featured-dl {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(0, 0, 0, 0));
+            border: 1px solid var(--accent); border-radius: 24px;
+            padding: 40px 20px; text-align: center; margin-bottom: 50px;
+        }
+        .version-tag { 
+            background: var(--accent); color: #000; font-weight: 800; 
+            padding: 4px 12px; border-radius: 50px; font-size: 0.7rem; display: inline-block; margin-bottom: 15px;
+        }
+        .featured-dl h1 { font-family: 'Sora'; margin-bottom: 10px; font-size: 2rem; }
+        .featured-dl p { color: var(--text-dim); font-size: 1rem; margin-bottom: 25px; }
+
+        .section-title {
+            font-family: 'Sora'; font-size: 1rem; margin-bottom: 30px; 
+            color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; text-align: center;
+        }
+
+        /* --- MINI SECTIONS GRID --- */
+        .desktop-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 60px; }
+        @media (min-width: 700px) { .desktop-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        .os-card { background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; }
+        .os-card h3 { font-family: 'Sora'; font-size: 0.9rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .version-list { display: flex; flex-direction: column; gap: 8px; }
+
+        /* THE COLOR FIX IS HERE */
+        .dl-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05); padding: 12px 16px;
+            border-radius: 12px; text-decoration: none; font-size: 0.85rem; transition: 0.2s;
+            border: 1px solid transparent;
+        }
+        .dl-item .v-num { color: white; font-weight: 500; }
+        .dl-item .dl-text { color: var(--accent); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
+        
+        .dl-item:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
+
+        /* --- MOBILE STORE SECTION --- */
+        .mobile-area { text-align: center; margin-bottom: 60px; }
+        .badge-group { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; }
+        .badge-group img { height: 45px; transition: 0.2s; }
+
+        /* --- COMMUNITY AREA --- */
+        .community-card {
+            background: linear-gradient(rgba(88, 101, 242, 0.1), rgba(0,0,0,0));
+            border: 1px solid rgba(88, 101, 242, 0.3);
+            border-radius: 24px; padding: 40px 20px; text-align: center;
+        }
+        .community-card h2 { font-family: 'Sora'; font-size: 1.5rem; margin-bottom: 10px; }
+        .community-card p { color: var(--text-dim); margin-bottom: 25px; max-width: 500px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+        .btn-discord {
+            background: var(--discord); color: white; padding: 14px 32px;
+            border-radius: 12px; text-decoration: none; font-family: 'Sora';
+            font-weight: 800; font-size: 0.9rem; display: inline-block; transition: 0.2s;
+        }
+        .btn-discord:hover { filter: brightness(1.2); transform: scale(1.03); }
+
+        footer { border-top: 1px solid var(--card-border); padding: 50px 5%; margin-top: 80px; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        .footer-col h4 { font-family: 'Sora'; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; margin-bottom: 15px; }
+        .footer-col a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; display: block; margin-bottom: 10px; }
+    
+    .fa-signal {
+    color: #2ecc71; /* Green */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="index.html" class="logo">Wi<span>Fly</span></a>
+        <div class="nav-links-landscape"><a href="/">Home</a><a href="/docs">Docs</a><!--class=active--><a href="/status">Status</a></div>
+        <div class="nav-actions">
+            <a href="/download" class="btn-white-land"><i class="fa-solid fa-download"></i> Download App</a>
+            <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="close-area" onclick="toggleMenu()">×</div>
+        <div class="mobile-links">
+            <a href="index.html" onclick="toggleMenu()">Home</a>
+            <a href="download.html" onclick="toggleMenu()" class="active">Download</a>
+            <a href="#" onclick="toggleMenu()">Docs</a>
+            <a href="https://github.com/GetWiFly" onclick="toggleMenu()"><i class="fa-brands fa-github"></i> GitHub</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="featured-dl">
+            <span class="version-tag"><i class="fa-solid fa-circle-check"></i> LATEST STABLE</span>
+            <h1>WiFly v1.2.0</h1>
+            <p>Simple Wi-Fi managing, now in the palm of your hand.</p>
+        </div>
+
+        <h2 class="section-title">Desktop & Source</h2>
+        <div class="desktop-grid">
+            <div class="os-card">
+                <h3>🪟 Windows</h3>
+                <div class="version-list">
+                    <a href="#" class="dl-item"><span class="v-num">V1.2.0</span><span class="dl-text" ><i class="fa-solid fa-download"></i> Download</span></a>
+                    <a href="#" class="dl-item"><span class="v-num">V1.1.0</span><span class="dl-text" ><i class="fa-solid fa-download"></i> Download</span></a>
+                </div>
+            </div>
+            <div class="os-card">
+                <h3>🐧 Linux</h3>
+                <div class="version-list">
+                    <a href="#" class="dl-item"><span class="v-num">V1.2.0</span><span class="dl-text" ><i class="fa-solid fa-download"></i> Download</span></a>
+                    <a href="#" class="dl-item"><span class="v-num">V1.1.0</span><span class="dl-text" ><i class="fa-solid fa-download"></i> Download</span></a>
+                </div>
+            </div>
+            <div class="os-card">
+                <h3>🍎 macOS</h3>
+                <div class="version-list">
+                    <a href="#" class="dl-item"><span class="v-num">V1.2.0</span><span class="dl-text" ><i class="fa-solid fa-download"></i> Download</span></a>
+                    <a href="#" class="dl-item" style="opacity: 0.3; pointer-events: none;"><span class="v-num">V1.1.0</span><span class="dl-text"><i class="fa-solid fa-clock"></i> N/A</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-area">
+            <h2 class="section-title">Mobile Versions</h2>
+            <div class="badge-group">
+                <a href="#unavailable" onclick="alert('Our mobile app is not finished yet, sorry!')"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store"></a>
+                <a href="#unavailable" onclick="alert('Our mobile app is not finished yet, sorry!')"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play"></a>
+            </div>
+            <p style="margin-top: 15px;"><a href="#" style="color: var(--accent); text-decoration: none; font-size: 0.8rem; font-weight: 600;">Download APK Directly <i class="fa-solid fa-arrow-right"></i></a></p>
+        </div>
+
+        <div class="community-card">
+            <h2>Join the Community</h2>
+            <p>Need support, want to report a bug, or just want to chat with other WiFly users? Join our official Discord!</p>
+            <a href="#" class="btn-discord"><i class="fa-brands fa-discord"></i> Join Discord Server</a>
+        </div>
+    </div>
+
+<footer> 
+    <div class="logo">
+        Wi<span>Fly</span>     
+    </div> 
+    <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px;">The ultimate Wi-Fi management tool.</p> 
+    <div class="footer-grid"> 
+        <div class="footer-col">
+            <h4>Product</h4>
+            <ul> 
+                <a href="/download"><i class="fa-solid fa-download"></i> Download</a>  
+                <a href="/docs"><i class="fa-solid fa-book"></i> Docs</a> 
+                <a href="/status"><i class="fa-solid fa-signal"></i> Status</a>
+            </ul>
+        </div>
+        <div class="footer-col"> 
+            <h4>Connect</h4>
+            <ul> 
+                <a href="https://discord.gg/wpAAq2ue5J">
+                    <i class="fa-brands fa-discord"></i> Discord
+                </a>   
+                <a href="https://github.com/GetWiFly">
+                    <i class="fa-brands fa-github"></i> GitHub                   
+                </a> 
+                <a href="mailto:tylerbloxofficialyt@gmail.com">
+                    <i class="fa-solid fa-envelope"></i> Email
+                </a> 
+            </ul> 
+        </div> 
+    </div> 
+</footer>
+
+    <script>
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : 'auto';
+        }
+    </script>
+</body>
+</html>
