@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Status | WiFly</title>
+    <script src="https://kit.fontawesome.com/eeb01edac2.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #00d2ff;
+            --bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: #888888;
+            --success: #2ecc71;
+            --discord: #5865F2;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; line-height: 1.5; overflow-x: hidden; }
+
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at 50% 0%, #1a2a3a 0%, #050505 50%);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; height: 75px; position: sticky; top: 0; z-index: 1000;
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo { font-family: 'Sora'; font-weight: 800; text-decoration: none; color: white; font-size: 1.3rem; }
+        .logo span { color: var(--accent); }
+        .nav-links-landscape { display: none; } 
+        .nav-links-landscape a { color: var(--text-dim); text-decoration: none; font-size: 0.95rem; font-weight: 600; font-family: 'Sora'; transition: 0.2s; }
+        .nav-links-landscape a.active, .nav-links-landscape a:hover { color: var(--accent); }
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .btn-white-land { display: none; }
+        .menu-btn { display: flex; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px; }
+        .menu-btn span { display: block; width: 25px; height: 2px; background: white; border-radius: 2px; }
+
+        /* --- MENU OVERLAY --- */
+        .menu-overlay {
+            position: fixed; top: 0; right: -100%; width: 100%; height: 100%;
+            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            z-index: 3000; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .menu-overlay.active { right: 0; }
+        .close-area { position: absolute; top: 20px; right: 30px; font-size: 2.5rem; color: var(--text-dim); cursor: pointer; }
+        .mobile-links { display: flex; flex-direction: column; gap: 30px; text-align: center; }
+        .mobile-links a { color: white; text-decoration: none; font-family: 'Sora'; font-size: 1.5rem; font-weight: 800; }
+        .mobile-links a.active { color: var(--accent); }
+
+        @media (min-width: 900px) {
+            .menu-btn { display: none !important; }
+            .nav-links-landscape { display: flex; gap: 40px; position: absolute; left: 50%; transform: translateX(-50%); }
+            .btn-white-land { display: block !important; background: white; color: black; padding: 10px 22px; border-radius: 10px; text-decoration: none; font-size: 0.9rem; font-weight: 800; font-family: 'Sora'; }
+        }
+
+        /* --- CONTENT --- */
+        .container { padding: 40px 5%; max-width: 1000px; margin: 0 auto; width: 100%; }
+
+        /* Status Hero */
+        .status-hero {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(0, 0, 0, 0));
+            border: 1px solid var(--success); border-radius: 24px;
+            padding: 50px 20px; text-align: center; margin-bottom: 40px;
+        }
+        .pulse-wrapper { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 15px; color: var(--success); font-weight: 700; font-size: 0.9rem; letter-spacing: 1px; }
+        .pulse-dot { width: 12px; height: 12px; background: var(--success); border-radius: 50%; box-shadow: 0 0 15px var(--success); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.4; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Component Cards */
+        .status-group { margin-bottom: 40px; }
+        .group-title { font-family: 'Sora'; font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 15px; letter-spacing: 2px; }
+        
+.status-card {
+    background: var(--card-bg); 
+    border: 1px solid var(--card-border);
+    border-radius: 16px; 
+    padding: 20px; 
+    margin-bottom: 12px;
+    display: flex; 
+    flex-direction: column; /* Stack vertically on small screens */
+    gap: 15px;
+}
+
+/* This container handles the Name and the Status text */
+.status-top-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+        .comp-name { font-family: 'Sora'; font-weight: 600; }
+        .comp-status { font-size: 0.85rem; font-weight: 700; color: var(--success); }
+
+        /* Uptime Bars */
+.uptime-row { 
+    display: flex; 
+    gap: 3px; 
+    height: 20px; 
+    width: 100%; /* Take up the full width available */
+}
+
+/* Tooltip Container */
+/* Base Bar Style (The Green State) */
+.bar {
+    flex: 1;
+    background: var(--success); /* This makes them green by default */
+    border-radius: 2px;
+    height: 20px;
+    opacity: 0.8;
+    transition: 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+
+.bar:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+
+/* The actual tooltip box */
+.bar::after {
+    content: attr(data-tooltip); /* This pulls text from the HTML attribute */
+    position: absolute;
+    bottom: 125%; /* Position above the bar */
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: #1a1a1a;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    white-space: nowrap;
+    border: 1px solid var(--card-border);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+    pointer-events: none;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/* Show tooltip on hover */
+.bar:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+    /* Red for a complete outage */
+.bar.down { 
+    background: #e74c3c; 
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+}
+
+/* Yellow for partial degradation/lag */
+.bar.degraded { 
+    background: #f1c40f; 
+    opacity: 1;
+}
+
+        /* Incident History */
+        .incident-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 30px; text-align: center; }
+
+        footer { border-top: 1px solid var(--card-border); padding: 50px 5%; margin-top: 80px; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        .footer-col h4 { font-family: 'Sora'; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; margin-bottom: 15px; }
+        .footer-col a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; display: block; margin-bottom: 10px; }
+        
+        i { margin-right: 8px; }
+    
+    /* Footer Status Pulse */
+.fa-signal.pulse-icon {
+    color: var(--success);
+    animation: pulse 2s infinite;
+    text-shadow: 0 0 8px rgba(46, 204, 113, 0.4);
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <nav>
+        <a href="/" class="logo">Wi<span>Fly</span></a>
+        <div class="nav-links-landscape"><a href="index.html">Home</a><a href="/docs">Docs</a><a href="/status" class="active">Status</a></div>
+        <div class="nav-actions">
+            <a href="/download" class="btn-white-land"><i class="fa-solid fa-download"></i> Download App</a>
+            <div class="menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        </div>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay">
+        <div class="close-area" onclick="toggleMenu()">×</div>
+        <div class="mobile-links">
+            <a href="/" onclick="toggleMenu()">Home</a>
+            <a href="/download" onclick="toggleMenu()">Download</a>
+            <a href="/docs" onclick="toggleMenu()">Docs</a>
+            <a href="/status" class="active">Status</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <section class="status-hero">
+            <div class="pulse-wrapper">
+                <div class="pulse-dot"></div> ALL SYSTEMS OPERATIONAL
+            </div>
+            <h1 style="font-family: 'Sora'; font-size: 2rem;">System Status</h1>
+            <p style="color: var(--text-dim); margin-top: 10px;">Real-time monitoring for WiFly Cloud and API services.</p>
+        </section>
+
+        <div class="status-group">
+            <h2 class="group-title">Core Services</h2>
+<div class="status-card">
+    <div class="status-top-flex">
+        <span class="comp-name">WiFly API (v1)</span>
+        <span class="comp-status">Operational</span>
+    </div>
+    <div class="uptime-row">
+        <div class="bar" data-tooltip="Feb 7: 100% Uptime"></div>
+        <div class="bar" data-tooltip="Feb 6: 100% Uptime"></div>
+        
+        <div class="bar down" data-tooltip="Feb 5: Major Outage (Database connection lost)"></div>
+        
+        <div class="bar degraded" data-tooltip="Feb 4: High Latency (DDoS Mitigation Active)"></div>
+        
+        <div class="bar" data-tooltip="Feb 3: 100% Uptime"></div>
+        <div class="bar" data-tooltip="Feb 2: 100% Uptime"></div>
+    </div>
+</div>
+
+
+            <div class="status-card">
+                <span class="comp-name">Authentication Engine</span>
+                <span class="comp-status">Operational</span>
+            </div>
+        </div>
+
+        <div class="status-group">
+            <h2 class="group-title">Network & Delivery</h2>
+            <div class="status-card">
+                <span class="comp-name">Captive Portal CDN</span>
+                <span class="comp-status">Operational</span>
+            </div>
+            <div class="status-card">
+                <span class="comp-name">North America (East)</span>
+                <span class="comp-status" style="color: var(--accent);">14ms</span>
+            </div>
+        </div>
+
+        <div class="status-group">
+            <h2 class="group-title">Past Incidents</h2>
+            <div class="incident-box">
+                <p style="color: var(--text-dim); font-size: 0.9rem;">No incidents reported in the last 90 days.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="logo">Wi<span>Fly</span></div>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 10px;">The ultimate Wi-Fi management tool.</p>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Product</h4>
+                <a href="/download"><i class="fa-solid fa-download"></i> Download</a>
+                <a href="/docs"><i class="fa-solid fa-book"></i> Docs</a>
+                <a href="/status"><i class="fa-solid fa-signal pulse-icon"></i> Status</a>
+            </div>
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <a href="https://discord.gg/wpAAq2ue5J"><i class="fa-brands fa-discord"></i> Discord</a>
+                <a href="https://github.com/GetWiFly"><i class="fa-brands fa-github"></i> GitHub</a>
+                <a href="mailto:tylerbloxofficialyt@gmail.com"><i class="fa-solid fa-envelope"></i> Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const overlay = document.getElementById('menuOverlay');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = overlay.classList.contains('active') ? 'hidden' : 'auto';
+        }
+    </script>
+</body>
+</html>
