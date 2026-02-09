@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Documentation | WiFly</title>
+    <script src="https://kit.fontawesome.com/eeb01edac2.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --accent: #00d2ff;
+        --bg: #050505;
+        --sidebar-bg: #0a0a0a;
+        --card-border: rgba(255, 255, 255, 0.1);
+        --text-dim: #888888;
+        --kbd-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: var(--bg); color: white; font-family: 'Inter', sans-serif; display: flex; }
+
+    /* --- PERMANENT SIDEBAR --- */
+    .sidebar {
+        width: 280px; height: 100vh; position: fixed; top: 0; left: 0;
+        background: var(--sidebar-bg); border-right: 1px solid var(--card-border);
+        padding: 80px 20px 20px; overflow-y: auto; z-index: 10;
+    }
+    .sidebar-group { margin-bottom: 25px; }
+    .sidebar-title { font-family: 'Sora'; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 800; }
+    .sidebar-link { display: block; color: var(--text-dim); text-decoration: none; font-size: 0.9rem; margin-bottom: 10px; transition: 0.2s; }
+    .sidebar-link:hover, .sidebar-link.active { color: white; transform: translateX(5px); }
+
+    /* --- HEADER / NAV --- */
+    nav {
+        position: fixed; top: 0; right: 0; left: 0; height: 65px;
+        background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(15px);
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 40px; z-index: 100; border-bottom: 1px solid var(--card-border);
+    }
+    /* Offset nav brand so it's over the sidebar */
+    .logo { font-family: 'Sora'; font-weight: 800; text-decoration: none; color: white; font-size: 1.2rem; }
+    .logo span { color: var(--accent); }
+
+    /* --- SEARCH BAR WITH CTRL+K --- */
+    .search-wrapper {
+        position: relative; display: flex; align-items: center;
+        background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+        border-radius: 8px; padding: 6px 12px; width: 300px; transition: 0.3s;
+    }
+    .search-wrapper:focus-within { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
+    .search-wrapper input { background: transparent; border: none; color: white; outline: none; width: 100%; margin-left: 10px; font-size: 0.85rem; }
+    
+    .kbd-hint {
+        font-size: 0.65rem; background: var(--kbd-bg); color: var(--text-dim);
+        padding: 2px 6px; border-radius: 4px; font-family: sans-serif; font-weight: 600;
+        border: 1px solid rgba(255,255,255,0.1); pointer-events: none;
+    }
+
+    /* --- CONTENT --- */
+.content {
+    margin-left: 280px; /* Stays fixed to the sidebar edge */
+    margin-top: 65px;
+    padding: 40px 50px; /* Roomy padding for a clean look */
+    width: calc(100% - 280px); /* Takes up ALL remaining space */
+    max-width: 1400px; /* Much wider limit for the content */
+    margin-right: 0; /* Align it to the left, next to the sidebar */
+}
+
+
+    /* Search Results Dropdown */
+    .results-dropdown {
+        position: absolute; top: 100%; left: 0; width: 100%;
+        background: #0f1117; border: 1px solid var(--card-border);
+        max-height: 250px; overflow-y: auto; display: none; border-radius: 0 0 8px 8px;
+        z-index: 1000;
+    }
+    .result-item { padding: 12px; border-bottom: 1px solid var(--card-border); color: white; text-decoration: none; display: block; font-size: 0.85rem; }
+    .result-item:hover { background: var(--accent); color: black; }
+
+    h1 { font-family: 'Sora'; font-size: 2.5rem; margin-bottom: 20px; }
+    p { color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; font-size: 1.05rem; }
+</style>
+
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+<nav>
+    <a href="index.html" class="logo">Wi<span>Fly</span></a>
+    
+    <div class="search-wrapper">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 0.8rem; color: var(--text-dim);"></i>
+        <input type="text" id="desktopSearch" placeholder="Search docs..." onkeyup="searchDocs('desktopSearch', 'desktop-results')">
+        <span class="kbd-hint">CTRL K</span>
+        <div id="desktop-results" class="results-dropdown"></div>
+    </div>
+</nav>
+
+
+    <div class="docs-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-group">
+                <h3 class="sidebar-title">Getting Started</h3>
+                <a href="/docs" class="sidebar-link active">Introduction</a>
+                <a href="/docs/get-started" class="sidebar-link">Get Started</a>
+                <a href="#" class="sidebar-link">Installation</a>
+            </div>
+            <div class="sidebar-group">
+                <h3 class="sidebar-title">Core Features</h3>
+                <a href="#" class="sidebar-link">Managing Networks</a>
+                <a href="#" class="sidebar-link">Security Protocols</a>
+                <a href="#" class="sidebar-link">Advanced Routing</a>
+            </div>
+            <div class="sidebar-group">
+                <h3 class="sidebar-title">API Reference</h3>
+                <a href="#" class="sidebar-link">Authentication</a>
+                <a href="#" class="sidebar-link">Endpoints</a>
+                <a href="#" class="sidebar-link">Webhooks</a>
+            </div>
+        </aside>
+
+        <main class="content">
+            <h1>Introduction</h1>
+            <p>Welcome to the <strong>WiFly</strong> documentation.</p>
+            <p>WiFly was built to bridge the gap between complex network engineering and seamless user experience. Whether you're monitoring high-traffic environments or securing a personal node, our documentation is designed to get you from 'Download' to 'Deployment' without the friction.</p>
+            
+            <div style="display: flex; justify-content: flex-end; margin-top: 60px; padding: 30px 0; border-top: 1px solid var(--card-border);">
+                <div style="text-align: right;">
+                    <span style="display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--accent); letter-spacing: 1px;">Next Up</span>
+                    <a href="/docs/get-started" style="color: white; text-decoration: none; font-weight: 700; font-family: 'Sora'; font-size: 1.2rem;">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+
+    function toggleSearch() {
+        document.getElementById('mobile-search-overlay').classList.toggle('active');
+    }
+
+    // Focus search on CTRL+K
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault(); // Stop browser search from opening
+            document.getElementById('desktopSearch').focus();
+        }
+    });
+
+    // Your existing searchDocs function
+    function searchDocs(inputId, resultsId) {
+        let input = document.getElementById(inputId).value.toLowerCase();
+        let dropdown = document.getElementById(resultsId);
+        let links = document.getElementsByClassName('sidebar-link');
+        
+        dropdown.innerHTML = "";
+        if (input.length < 1) { dropdown.style.display = "none"; return; }
+
+        let found = false;
+        for (let link of links) {
+            if (link.innerText.toLowerCase().includes(input)) {
+                let item = document.createElement('a');
+                item.href = link.href;
+                item.className = 'result-item';
+                item.innerHTML = `<strong>${link.innerText}</strong>`;
+                dropdown.appendChild(item);
+                found = true;
+            }
+        }
+        dropdown.style.display = found ? "block" : "none";
+        if(!found) {
+            dropdown.innerHTML = `<div class="result-item">No results found</div>`;
+            dropdown.style.display = "block";
+        }
+    }
+</script>
+
+</script>
+</body>
+</html>
