@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFly Setup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --win-bg: #ffffff;
+            --accent: #0078d4;
+            --taskbar: rgba(20, 20, 20, 0.85);
+            --wifly-blue: #00d2ff;
+        }
+
+body, html {
+    margin: 0; padding: 0;
+    height: 100vh; width: 100vw;
+    background: url('https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?q=80&w=2000') no-repeat center center;
+    background-size: cover;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+    
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    
+    /* THE FIX: Push the window up so it doesn't hit the taskbar */
+    padding-bottom: 48px; 
+    box-sizing: border-box;
+}
+
+/* TITLE BAR - STICKY TO TOP */
+.wizard-header {
+    height: 35px;
+    padding: 0 15px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    z-index: 100; /* Keeps controls above the splash */
+    position: relative;
+}
+
+.win-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* THE SPLASH INSIDE */
+#inner-splash {
+    position: absolute;
+    top: 35px; /* Starts below the title bar */
+    left: 0;
+    width: 100%;
+    height: calc(100% - 35px);
+    background: #111;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 90;
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+        .win-controls i:hover { color: #000; cursor: pointer; }
+
+        /* ANIMATION STAGE (INSIDE WINDOW) */
+        .wizard-content-wrapper {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 40px;
+        }
+
+
+
+        .flying-logo {
+            font-size: 4rem;
+            color: var(--wifly-blue);
+            animation: flyIn 1.5s ease-out forwards;
+        }
+
+        @keyframes flyIn {
+            0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        /* SETUP ELEMENTS */
+        .setup-ui { text-align: left; width: 100%; opacity: 0; transition: 0.5s; }
+        .wizard-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; color: #000; }
+        .progress-box { margin-top: 25px; display: none; }
+        .bar-bg { width: 100%; height: 6px; background: #e0e0e0; border-radius: 10px; overflow: hidden; }
+        .bar-fill { width: 0%; height: 100%; background: var(--accent); transition: width 0.2s; }
+
+        /* TASKBAR STUFF */
+        #taskbar {
+            position: absolute; bottom: 0; width: 100%; height: 48px;
+            background: var(--taskbar); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .tb-left { display: flex; align-items: center; height: 100%; padding-left: 10px; gap: 5px; }
+        .tb-icon { width: 40px; height: 100%; display: flex; justify-content: center; align-items: center; color: white; }
+    
+    
+/* This creates a container that stops right at the taskbar */
+.workspace {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 48px); /* Total height minus taskbar height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 40;
+}
+
+.wizard-window {
+    width: 90%;
+    max-width: 520px;
+    height: 380px;
+    background: var(--win-bg);
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 50;
+
+    /* THE IRONCLAD CENTER */
+    position: absolute;
+    top: 0; 
+    bottom: 48px; /* Room for taskbar */
+    left: 0; 
+    right: 0;
+    margin: auto; /* This forces it to the center of the defined box */
+}
+    </style>
+</head>
+<body>
+  <div class="workspace">
+    <div class="wizard-window">
+        <div class="wizard-header">
+            <span><i class="fa-solid fa-plane-up" style="font-size: 0.7rem; margin-right: 5px;"></i> WiFly Setup</span>
+            <div class="win-controls">
+                <i class="fa-solid fa-minus"></i>
+                <i class="fa-regular fa-square"></i>
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+        </div>
+
+        <div class="wizard-content-wrapper">
+            <div id="inner-splash">
+                <div class="flying-logo"><i class="fa-solid fa-plane-up"></i></div>
+                <div style="color:white; margin-top:15px; letter-spacing:3px; font-size:0.8rem;">WELCOME TO WIFLY</div>
+            </div>
+
+            <div id="setup-ui" class="setup-ui">
+                <div id="heading" class="wizard-title">Ready to Install?</div>
+                <p id="desc" style="font-size: 0.85rem; color: #555;">Click 'Extract' to begin the installation process on your device.</p>
+                
+                <div class="progress-box" id="p-box">
+                    <div style="font-size: 0.7rem; margin-bottom: 8px; display: flex; justify-content: space-between;">
+                        <span id="file-name">Processing...</span>
+                        <span id="percent">0%</span>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill" id="fill"></div></div>
+                </div>
+
+                <div id="footer-btns" style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="extract-btn" style="padding: 7px 25px; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="startExtraction()">Extract</button>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+    
+    <div id="taskbar">
+        <div class="tb-left">
+            <div class="tb-icon" style="color: #00a4ef;"><i class="fa-brands fa-windows"></i></div>
+            <div class="tb-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="tb-icon"><i class="fa-solid fa-folder" style="color: #f1c40f;"></i></div>
+            <div class="tb-icon" style="border-bottom: 3px solid var(--wifly-blue);"><i class="fa-solid fa-plane-up" style="color: var(--wifly-blue);"></i></div>
+        </div>
+        <div style="padding-right: 15px; color: white; font-size: 0.75rem; text-align: right;">
+            <div id="clock">12:00 PM</div>
+            <div>02/11/2026</div>
+        </div>
+    </div>
+
+    <script>
+        // Start by showing the inner animation
+        window.onload = () => {
+            setTimeout(() => {
+                // Slide the splash up out of the window
+                document.getElementById('inner-splash').style.transform = "translateY(-100%)";
+                document.getElementById('setup-ui').style.opacity = "1";
+            }, 3000);
+        };
+
+        function startExtraction() {
+            const btn = document.getElementById('extract-btn');
+            const pBox = document.getElementById('p-box');
+            const fill = document.getElementById('fill');
+            const head = document.getElementById('heading');
+            const desc = document.getElementById('desc');
+            const percent = document.getElementById('percent');
+
+            btn.style.display = "none";
+            pBox.style.display = "block";
+            head.innerText = "Extracting Files";
+            desc.innerText = "Please wait while WiFly Setup extracts files...";
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                fill.style.width = progress + "%";
+                percent.innerText = progress + "%";
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
+                }
+            }, 80);
+        }
+
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+    
+    // ... inside the if (progress >= 100) block ...
+clearInterval(interval);
+head.innerText = "Installation Complete";
+desc.innerText = "WiFly has been successfully installed. Click 'Finish' to start the application.";
+fill.style.backgroundColor = "#28a745"; // Turn the bar green for success!
+
+// Show a "Finish" button
+const footer = document.getElementById('footer-btns');
+footer.innerHTML = `<button style="padding: 7px 25px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;" onclick="launchApp()">Finish</button>`;
+
+function launchApp() {
+    // This will lead to your main Dashboard/App page
+    window.location.href = "/app-preview/loading2";
+}
+    </script>
+</body>
+</html>
