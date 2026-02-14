@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFly Gateway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --win-bg: rgba(28, 28, 30, 0.95);
+            --accent: #00d2ff;
+            --taskbar-bg: rgba(20, 20, 20, 0.85);
+            --tile-bg: rgba(255, 255, 255, 0.05);
+            --tile-hover: rgba(255, 255, 255, 0.12);
+            --notif-bg: rgba(32, 32, 32, 0.9);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100vh; width: 100vw;
+            background: url('https://images.unsplash.com/photo-1617957718614-8c23f060c2d0?q=80&w=2000') no-repeat center center;
+            background-size: cover;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* NOTIFICATION - BOTTOM RIGHT */
+        #notification {
+            position: fixed;
+            bottom: 60px;
+            right: -450px;
+            width: 85%;
+            max-width: 320px;
+            background: var(--notif-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            transition: right 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+        }
+
+        .notif-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.75rem; color: var(--accent); font-weight: bold; }
+        .notif-body { font-size: 0.8rem; line-height: 1.4; color: #eee; }
+        .notif-close { cursor: pointer; color: #888; }
+
+        /* WORKSPACE & WINDOW */
+        .workspace {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            height: calc(100vh - 48px);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .wizard-window {
+            width: 90%;
+            max-width: 650px;
+            background: var(--win-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .window-header {
+            height: 35px; padding: 0 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.05); color: #ccc; font-size: 0.8rem;
+        }
+
+        .win-controls { display: flex; gap: 15px; }
+        .win-controls i:hover { color: white; cursor: pointer; }
+
+.window-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    height: 350px; /* Forces both tiles and forms to live in the same height */
+}
+
+        /* CHOICE TILES */
+        .choice-container { display: flex; gap: 25px; transition: 0.4s; }
+        .choice-tile {
+            width: 180px; height: 180px;
+            background: var(--tile-bg); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: white; cursor: pointer; transition: 0.3s;
+        }
+        .choice-tile i { font-size: 3rem; margin-bottom: 15px; color: var(--accent); }
+        .choice-tile:hover { background: var(--tile-hover); transform: translateY(-5px); border-color: var(--accent); }
+
+        /* FORM BOX */
+        #form-box { display: none; width: 300px; text-align: center; color: white; animation: fadeIn 0.4s; }
+        input { width: 100%; padding: 12px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; color: white; outline: none; box-sizing: border-box; }
+        .btn-main { width: 100%; padding: 12px; background: var(--accent); color: black; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        /* TASKBAR RESTORED */
+        #taskbar {
+            position: absolute; bottom: 0; width: 100%; height: 48px;
+            background: var(--taskbar-bg); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+        }
+        .tb-left { display: flex; align-items: center; height: 100%; padding-left: 5px; }
+        .tb-icon { width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.1rem; transition: 0.2s; border-bottom: 3px solid transparent; }
+        .tb-icon:hover { background: rgba(255,255,255,0.1); }
+        .tb-icon.active { border-bottom: 3px solid var(--accent); background: rgba(255,255,255,0.05); }
+
+        .tb-right { display: flex; align-items: center; gap: 15px; padding-right: 15px; color: white; }
+        .system-tray { display: flex; gap: 10px; font-size: 0.85rem; color: #ccc; }
+        .time-container { text-align: right; font-size: 0.7rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px; }
+
+        @media (max-width: 600px) {
+            .choice-container { flex-direction: column; }
+            #notification { right: -110%; width: calc(100% - 40px); margin: 0 20px; bottom: 60px; }
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body onload="showNotif()">
+
+    <div id="notification">
+        <div class="notif-header">
+            <span><i class="fa-solid fa-circle-info"></i> WiFly System</span>
+            <i class="fa-solid fa-xmark notif-close" onclick="closeNotif()"></i>
+        </div>
+        <div class="notif-body">
+            When you preview the login and signup pages, you can type in whatever and it'll let you in. This page does not save any login information.<br><br>
+            For the login page to work, the username is <b>"Test"</b> and the password is <b>"1234567890"</b>.
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div class="wizard-window">
+            <div class="window-header">
+                <span><i class="fa-solid fa-plane-up"></i> WiFly Access</span>
+                <div class="win-controls">
+                    <i class="fa-solid fa-minus"></i>
+                    <i class="fa-regular fa-square"></i>
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="choice-container" id="choice-container">
+                    <div class="choice-tile" onclick="openForm('Login')">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>LOGIN</span>
+                    </div>
+                    <div class="choice-tile" onclick="openForm('Sign Up')">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>SIGN UP</span>
+                    </div>
+                </div>
+                <div id="form-box">
+                    <h2 id="title">Login</h2>
+                    <input type="text" id="userIn" placeholder="Username">
+                    <div id="extra" style="display:none;"><input type="email" placeholder="Email"></div>
+                    <input type="password" id="passIn" placeholder="Password">
+                    <button class="btn-main" onclick="validate()">Continue</button>
+                    <p onclick="back()" style="font-size: 0.8rem; color: #888; cursor: pointer; margin-top: 15px;">Go Back</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="taskbar">
+        <div class="tb-left">
+            <div class="tb-icon" style="color: #00a4ef;"><i class="fa-brands fa-windows"></i></div>
+            <div class="tb-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="tb-icon"><i class="fa-solid fa-folder" style="color: #f1c40f;"></i></div>
+            <div class="tb-icon" id="browser-link"><i id="browser-icon" class="fa-solid fa-globe"></i></div>
+            <div class="tb-icon active"><i class="fa-solid fa-plane-up" style="color: var(--accent);"></i></div>
+        </div>
+        <div class="tb-right">
+            <div class="system-tray">
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-volume-high"></i>
+            </div>
+            <div class="time-container">
+                <div id="clock">12:00 PM</div>
+                <div id="date">02/14/2026</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showNotif() {
+            const notif = document.getElementById('notification');
+            setTimeout(() => {
+                notif.style.right = '20px';
+                setTimeout(() => { closeNotif(); }, 8000); 
+            }, 1000);
+        }
+
+        function closeNotif() {
+            const notif = document.getElementById('notification');
+            notif.style.opacity = '0';
+            setTimeout(() => { notif.style.right = '-450px'; notif.style.opacity = '1'; }, 500);
+        }
+
+        function openForm(type) {
+            document.getElementById('choice-container').style.display = 'none';
+            document.getElementById('form-box').style.display = 'block';
+            document.getElementById('title').innerText = type;
+            document.getElementById('extra').style.display = (type === 'Sign Up') ? 'block' : 'none';
+        }
+
+        function back() {
+            document.getElementById('choice-container').style.display = 'flex';
+            document.getElementById('form-box').style.display = 'none';
+        }
+
+        function validate() {
+            const u = document.getElementById('userIn').value;
+            const p = document.getElementById('passIn').value;
+            if (document.getElementById('title').innerText === "Login") {
+                if (u === "Test" && p === "1234567890") { window.location.href = "dashboard.html"; }
+                else { alert("Incorrect! Check the notification for credentials."); }
+            } else { window.location.href = "dashboard.html"; }
+        }
+
+        // BROWSER & CLOCK
+        const userAgent = navigator.userAgent;
+        const bIcon = document.getElementById('browser-icon');
+        const bLink = document.getElementById('browser-link');
+        if (userAgent.indexOf("Edg") > -1) { bIcon.className = "fa-brands fa-edge"; bLink.style.color = "#0078d7"; }
+        else if (userAgent.indexOf("Chrome") > -1) { bIcon.className = "fa-brands fa-chrome"; bLink.style.color = "#ffce44"; }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString();
+        }, 1000);
+    </script>
+</body>
+</html>
